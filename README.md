@@ -1,194 +1,235 @@
 # 🍺 Beer Control API
 
-Backend del sistema **Beer Control**, desarrollado con **NestJS**, **Prisma** y **PostgreSQL**, siguiendo principios de **Clean Architecture** y **Domain-Driven Design (DDD)**.
+Beer Control es un ERP SaaS desarrollado para la administración integral de cervecerías, bares y distribuidores de cerveza.
+
+El proyecto está construido utilizando **NestJS**, **Prisma ORM**, **PostgreSQL** y siguiendo los principios de **Clean Architecture**, **DDD (Domain-Driven Design)** y una arquitectura de **Monolito Modular**.
 
 ---
 
-# Tecnologías
+# 🚀 Tecnologías
 
 - NestJS 11
 - TypeScript
-- Prisma ORM
 - PostgreSQL
-- Swagger (OpenAPI)
+- Prisma ORM
+- Docker
+- Swagger / OpenAPI
 - Class Validator
-- Class Transformer
+- Clean Architecture
+- Domain-Driven Design (DDD)
 
 ---
 
-# Arquitectura
+# 📂 Arquitectura
 
-El proyecto sigue una arquitectura basada en **DDD + Clean Architecture**, separando claramente las responsabilidades de cada capa.
+El proyecto sigue una arquitectura basada en módulos independientes.
 
 ```
 src/
-│
 ├── core/
-│   ├── application/
-│   ├── domain/
-│   ├── presentation/
-│   └── constants/
-│
+├── config/
 ├── database/
-│   └── prisma/
-│
-├── modules/
-│   └── identity/
-│
-└── main.ts
+└── modules/
 ```
 
-Cada módulo contiene:
+Cada módulo mantiene la siguiente estructura:
 
 ```
-application/
-domain/
-infrastructure/
-presentation/
+module/
+├── application/
+├── domain/
+├── infrastructure/
+├── presentation/
+└── module.ts
 ```
 
 ---
 
-# Módulos
+# 🏗️ Core
 
-Actualmente el proyecto contiene el siguiente módulo:
+Actualmente el proyecto cuenta con una capa Core reutilizable para todos los módulos.
 
-## Identity
+## Application
 
-### Company
+- Pagination
+- PageRequest
+- PageResult
 
-Operaciones implementadas:
+## Domain
 
-- Crear empresa
-- Obtener empresa
-- Listar empresas (Paginado)
-- Actualizar empresa
-- Eliminación lógica (Soft Delete)
+- BaseEntity
+- BaseRepository
 
----
+## Presentation
 
-# Características
-
-## Validación
-
-Se utiliza **ValidationPipe** de forma global.
-
-- Transformación automática
-- Whitelist
-- Validación de DTOs
+- Global Exception Filter
+- Response Interceptor
+- Pagination DTO
 
 ---
 
-## Manejo de errores
+# 🗄️ Infraestructura
 
-La aplicación utiliza un **GlobalExceptionFilter** para centralizar todas las respuestas de error.
+Implementado:
 
-Formato:
-
-```json
-{
-  "success": false,
-  "statusCode": 404,
-  "error": "NotFoundException",
-  "message": "Company not found.",
-  "path": "/api/companies/123",
-  "timestamp": "2026-07-29T18:00:00.000Z"
-}
-```
-
----
-
-## Respuestas
-
-Las respuestas exitosas son envueltas automáticamente mediante un **ResponseInterceptor**.
-
-Formato:
-
-```json
-{
-  "success": true,
-  "data": {}
-}
-```
-
----
-
-# Base de datos
-
-ORM:
-
-- Prisma
-
-Motor:
-
+- Docker
 - PostgreSQL
+- Prisma ORM
+- Prisma Migrations
+- PrismaService
+- DatabaseModule
+- Swagger
+- ValidationPipe Global
+- Global Exception Filter
+- Response Interceptor
 
-Migraciones:
+---
 
-```bash
-npx prisma migrate dev
+# 📦 Organización del Dominio
+
+Actualmente se encuentra implementado el módulo **Organization**.
+
 ```
-
-Abrir Prisma Studio:
-
-```bash
-npx prisma studio
+Organization
+│
+├── Company
+└── Branch
 ```
 
 ---
 
-# Instalación
+# 🏢 Company
 
-```bash
-npm install
+Implementado completamente.
+
+### Características
+
+- CRUD completo
+- Soft Delete
+- Validaciones de dominio
+- DTOs
+- Swagger
+- Repository Pattern
+- Prisma Repository
+- Mappers
+- Pagination
+
+---
+
+# 🏪 Branch
+
+Implementado completamente.
+
+### Características
+
+- CRUD completo
+- Relación con Company
+- Validación de existencia de Company
+- Código único por empresa
+- Soft Delete
+- DTOs
+- Swagger
+- Repository Pattern
+- Prisma Repository
+- Mappers
+- Pagination
+
+---
+
+# 🧩 Convenciones de Arquitectura
+
+Todos los módulos implementan exactamente la misma estructura.
+
+## Application
+
+```
+Commands
+Queries
+Use Cases
+Results
+```
+
+## Domain
+
+```
+Entities
+Repositories
+Enums
+```
+
+## Infrastructure
+
+```
+Persistence
+Repositories
+Mappers
+```
+
+## Presentation
+
+```
+Controllers
+DTOs
+Response Mappers
 ```
 
 ---
 
-# Variables de entorno
+# 📋 Estado del Proyecto
 
-Crear un archivo:
+## Organización
 
-```
-.env
-```
+| Módulo | Estado |
+|---------|--------|
+| Company | ✅ |
+| Branch | ✅ |
 
-Ejemplo:
+## Inventario
 
-```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/beer_control"
-PORT=3000
-```
+| Módulo | Estado |
+|---------|--------|
+| Warehouse | ⏳ |
+| Product | ⏳ |
+| Inventory | ⏳ |
+
+## Compras
+
+| Módulo | Estado |
+|---------|--------|
+| Supplier | ⏳ |
+| Purchase Order | ⏳ |
+
+## Ventas
+
+| Módulo | Estado |
+|---------|--------|
+| Customer | ⏳ |
+| Sales | ⏳ |
+
+## Caja
+
+| Módulo | Estado |
+|---------|--------|
+| Cash Register | ⏳ |
+
+## Reportes
+
+| Módulo | Estado |
+|---------|--------|
+| Dashboard | ⏳ |
+| Reports | ⏳ |
+
+## Configuración
+
+| Módulo | Estado |
+|---------|--------|
+| Settings | ⏳ |
 
 ---
 
-# Ejecutar proyecto
+# 📖 API
 
-Modo desarrollo
-
-```bash
-npm run start:dev
-```
-
-Modo producción
-
-```bash
-npm run build
-
-npm run start:prod
-```
-
----
-
-# Swagger
-
-Disponible en:
-
-```
-http://localhost:3000/docs
-```
-
-API:
+La documentación se encuentra disponible mediante Swagger.
 
 ```
 http://localhost:3000/api
@@ -196,42 +237,53 @@ http://localhost:3000/api
 
 ---
 
-# Estructura del dominio
-
-```
-Company
-│
-├── Branch
-│      ├── Warehouse
-│      └── Employees
-│
-├── Products
-│
-├── Suppliers
-│
-├── Customers
-│
-├── Purchases
-│
-└── Sales
-```
-
----
-
-# Convenciones
+# 🧱 Principios de Desarrollo
 
 - Clean Architecture
-- Domain-Driven Design
+- Domain-Driven Design (DDD)
+- SOLID
 - Repository Pattern
-- CQRS ligero (Commands / Queries)
-- Soft Delete
-- DTOs para entrada y salida
-- Prisma como capa de persistencia
+- Dependency Injection
+- Modular Monolith
+- API First
+- OpenAPI (Swagger)
 
 ---
 
-# Autor
+# ▶️ Ejecutar el proyecto
 
-Beer Control API
+## Instalar dependencias
 
-2026
+```bash
+npm install
+```
+
+## Levantar PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+## Ejecutar migraciones
+
+```bash
+npx prisma migrate dev
+```
+
+## Generar Prisma Client
+
+```bash
+npx prisma generate
+```
+
+## Ejecutar el proyecto
+
+```bash
+npm run start:dev
+```
+
+---
+
+# 👨‍💻 Autor
+
+Desarrollado con ❤️ utilizando NestJS + Prisma + PostgreSQL.
