@@ -20,6 +20,11 @@ enum CompanyStatus {
   INACTIVE
 }
 
+enum BranchStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Company {
   id           String        @id @default(cuid())
   name         String
@@ -31,9 +36,45 @@ model Company {
   timezone     String        @default("America/Bogota")
   status       CompanyStatus @default(TRIAL)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Relación
+  branches Branch[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+  @@index([status])
+}
+
+model Branch {
+  id String @id @default(cuid())
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  code String
+  name String
+
+  email   String?
+  phone   String?
+  address String?
+
+  city  String
+  state String?
+
+  country String
+
+  postalCode String?
+
+  timezone String
+
+  status BranchStatus @default(ACTIVE)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([companyId, code])
+  @@index([companyId])
   @@index([status])
 }

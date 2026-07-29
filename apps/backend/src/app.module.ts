@@ -6,6 +6,7 @@ import configuration from './config/configuration';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { CompanyModule } from './modules/organization/company/company.module';
+import { BranchModule } from './modules/organization/branch/branch.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CompanyModule } from './modules/organization/company/company.module';
     DatabaseModule,
     HealthModule,
     CompanyModule,
+    BranchModule,
   ],
 })
 export class AppModule {}
