@@ -2,7 +2,7 @@
 
 Beer Control es un ERP SaaS desarrollado para la administración integral de cervecerías, bares y distribuidores de cerveza.
 
-El proyecto está construido utilizando **NestJS**, **Prisma ORM**, **PostgreSQL** y siguiendo los principios de **Clean Architecture**, **DDD (Domain-Driven Design)** y una arquitectura de **Monolito Modular**.
+El proyecto está construido utilizando **NestJS**, **Prisma ORM**, **PostgreSQL** y siguiendo los principios de **Clean Architecture**, **Domain-Driven Design (DDD)** y una arquitectura de **Monolito Modular**.
 
 ---
 
@@ -17,6 +17,7 @@ El proyecto está construido utilizando **NestJS**, **Prisma ORM**, **PostgreSQL
 - Class Validator
 - Clean Architecture
 - Domain-Driven Design (DDD)
+- CQRS (Commands / Queries)
 
 ---
 
@@ -24,7 +25,7 @@ El proyecto está construido utilizando **NestJS**, **Prisma ORM**, **PostgreSQL
 
 El proyecto sigue una arquitectura basada en módulos independientes.
 
-```
+```text
 src/
 ├── core/
 ├── config/
@@ -32,9 +33,9 @@ src/
 └── modules/
 ```
 
-Cada módulo mantiene la siguiente estructura:
+Cada módulo mantiene la siguiente estructura.
 
-```
+```text
 module/
 ├── application/
 ├── domain/
@@ -87,13 +88,19 @@ Implementado:
 
 # 📦 Organización del Dominio
 
-Actualmente se encuentra implementado el módulo **Organization**.
+Actualmente el proyecto se encuentra organizado por dominios funcionales.
 
-```
-Organization
+```text
+modules/
+
+organization/
 │
-├── Company
-└── Branch
+├── company
+└── branch
+
+inventory/
+│
+└── warehouse
 ```
 
 ---
@@ -136,13 +143,33 @@ Implementado completamente.
 
 ---
 
+# 🏬 Warehouse
+
+Implementado completamente.
+
+### Características
+
+- CRUD completo
+- Relación con Branch
+- Validación de existencia de Branch
+- Código único por sucursal
+- Soft Delete
+- DTOs
+- Swagger
+- Repository Pattern
+- Prisma Repository
+- Mappers
+- Pagination
+
+---
+
 # 🧩 Convenciones de Arquitectura
 
 Todos los módulos implementan exactamente la misma estructura.
 
 ## Application
 
-```
+```text
 Commands
 Queries
 Use Cases
@@ -151,7 +178,7 @@ Results
 
 ## Domain
 
-```
+```text
 Entities
 Repositories
 Enums
@@ -159,7 +186,7 @@ Enums
 
 ## Infrastructure
 
-```
+```text
 Persistence
 Repositories
 Mappers
@@ -167,11 +194,146 @@ Mappers
 
 ## Presentation
 
-```
+```text
 Controllers
 DTOs
 Response Mappers
 ```
+
+---
+
+# 📏 Convenciones de Desarrollo
+
+## Entidades
+
+Todas las entidades:
+
+- Heredan de `BaseEntity`.
+- Utilizan propiedades privadas (`_name`, `_code`, etc.).
+- Exponen únicamente getters.
+- Toda modificación se realiza mediante métodos de dominio (`update`, `activate`, `deactivate`, etc.).
+
+---
+
+## Repositories
+
+Cada módulo define únicamente un contrato.
+
+```ts
+export abstract class CompanyRepository {}
+```
+
+La implementación pertenece a Infrastructure.
+
+---
+
+## Mappers
+
+Todos los mappers implementan exactamente los siguientes métodos:
+
+```text
+toDomain()
+toCreate()
+toUpdate()
+```
+
+No se utilizan métodos como:
+
+```text
+toPersistence()
+fromEntity()
+```
+
+---
+
+## Commands
+
+Toda operación de escritura recibe un Command.
+
+Ejemplo:
+
+```ts
+execute(command: CreateCompanyCommand)
+```
+
+Nunca se reciben parámetros individuales.
+
+---
+
+## Queries
+
+Toda operación de lectura recibe un Query.
+
+Ejemplo:
+
+```ts
+execute(query: GetCompanyQuery)
+```
+
+---
+
+## Results
+
+Cada caso de uso retorna un objeto específico.
+
+```text
+CreateResult
+UpdateResult
+DeleteResult
+GetResult
+SummaryResult
+```
+
+Los listados siempre retornan:
+
+```ts
+PageResult<T>
+```
+
+---
+
+## Controllers
+
+Los controllers únicamente:
+
+- reciben DTOs
+- crean Commands o Queries
+- ejecutan casos de uso
+
+No contienen lógica de negocio.
+
+---
+
+## ResponseMapper
+
+Transforman entidades del dominio en objetos de respuesta.
+
+Nunca se exponen directamente las entidades del dominio.
+
+---
+
+# 📋 Checklist para nuevos módulos
+
+Antes de considerar un módulo terminado debe verificarse:
+
+- [ ] Modelo Prisma
+- [ ] Migración
+- [ ] Prisma Client
+- [ ] Entity
+- [ ] Repository
+- [ ] Mapper
+- [ ] Prisma Repository
+- [ ] Create
+- [ ] Update
+- [ ] Delete
+- [ ] Get
+- [ ] List
+- [ ] DTOs
+- [ ] Response Mapper
+- [ ] Controller
+- [ ] Module
+- [ ] Swagger
+- [ ] CRUD probado
 
 ---
 
@@ -188,9 +350,13 @@ Response Mappers
 
 | Módulo | Estado |
 |---------|--------|
-| Warehouse | ⏳ |
+| Warehouse | ✅ |
+| Category | ⏳ |
+| Brand | ⏳ |
+| Unit | ⏳ |
 | Product | ⏳ |
 | Inventory | ⏳ |
+| Inventory Movement | ⏳ |
 
 ## Compras
 
@@ -198,13 +364,15 @@ Response Mappers
 |---------|--------|
 | Supplier | ⏳ |
 | Purchase Order | ⏳ |
+| Purchase Detail | ⏳ |
 
 ## Ventas
 
 | Módulo | Estado |
 |---------|--------|
 | Customer | ⏳ |
-| Sales | ⏳ |
+| Sale | ⏳ |
+| Sale Detail | ⏳ |
 
 ## Caja
 
@@ -231,7 +399,7 @@ Response Mappers
 
 La documentación se encuentra disponible mediante Swagger.
 
-```
+```text
 http://localhost:3000/api
 ```
 
@@ -242,6 +410,7 @@ http://localhost:3000/api
 - Clean Architecture
 - Domain-Driven Design (DDD)
 - SOLID
+- CQRS
 - Repository Pattern
 - Dependency Injection
 - Modular Monolith
@@ -284,6 +453,23 @@ npm run start:dev
 
 ---
 
+# 🚀 Roadmap
+
+Próximos módulos a implementar:
+
+1. Category
+2. Brand
+3. Unit
+4. Product
+5. Inventory
+6. Inventory Movement
+7. Supplier
+8. Purchase
+9. Customer
+10. Sales
+
+---
+
 # 👨‍💻 Autor
 
-Desarrollado con ❤️ utilizando NestJS + Prisma + PostgreSQL.
+Desarrollado con ❤️ utilizando NestJS, Prisma ORM y PostgreSQL.
