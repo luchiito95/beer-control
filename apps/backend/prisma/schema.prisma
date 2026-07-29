@@ -35,6 +35,16 @@ enum CategoryStatus {
   INACTIVE
 }
 
+enum BrandStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum UnitStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Company {
   id           String        @id @default(cuid())
   name         String
@@ -49,6 +59,8 @@ model Company {
   // Relaciones
   branches Branch[]
   categories Category[]
+  brands Brand[]
+  units Unit[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -128,6 +140,49 @@ model Category {
 
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([status])
+}
+
+model Brand {
+  id          String      @id @default(cuid())
+
+  companyId   String
+  company     Company     @relation(fields: [companyId], references: [id])
+
+  code        String
+  name        String
+  description String?
+
+  status      BrandStatus @default(ACTIVE)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([status])
+}
+
+model Unit {
+  id          String     @id @default(cuid())
+
+  companyId   String
+  company     Company    @relation(fields: [companyId], references: [id])
+
+  code        String
+  name        String
+  symbol      String
+  description String?
+
+  status      UnitStatus @default(ACTIVE)
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   deletedAt   DateTime?
 
   @@unique([companyId, code])

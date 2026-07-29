@@ -100,6 +100,8 @@ Organization
 Inventory
 ├── Warehouse     ✅
 └── Category      ✅
+├── Brand         ✅
+└── Unit          ✅
 ```
 
 ---
@@ -152,6 +154,66 @@ Implementado completamente.
 - Relación con Branch
 - Validación de existencia de Branch
 - Código único por sucursal
+- Soft Delete
+- DTOs
+- Swagger
+- Repository Pattern
+- Prisma Repository
+- Mappers
+- Pagination
+
+---
+# 🗂️ Category
+
+Implementado completamente.
+
+### Características
+
+- CRUD completo
+- Relación con Company
+- Validación de existencia de Company
+- Código único por empresa
+- Soft Delete
+- DTOs
+- Swagger
+- Repository Pattern
+- Prisma Repository
+- Mappers
+- Pagination
+
+---
+
+# 🏷️ Brand
+
+Implementado completamente.
+
+### Características
+
+- CRUD completo
+- Relación con Company
+- Validación de existencia de Company
+- Código único por empresa
+- Soft Delete
+- DTOs
+- Swagger
+- Repository Pattern
+- Prisma Repository
+- Mappers
+- Pagination
+
+---
+
+# 📏 Unit
+
+Implementado completamente.
+
+### Características
+
+- CRUD completo
+- Relación con Company
+- Validación de existencia de Company
+- Código único por empresa
+- Nombre y símbolo de unidad
 - Soft Delete
 - DTOs
 - Swagger
@@ -351,8 +413,8 @@ Antes de considerar un módulo terminado debe verificarse:
 |---------|--------|
 | Warehouse | ✅ |
 | Category | ✅ |
-| Brand | ⏳ |
-| Unit | ⏳ |
+| Brand | ✅ |
+| Unit | ✅ |
 | Product | ⏳ |
 | Inventory | ⏳ |
 | Inventory Movement | ⏳ |
