@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PageResult } from '../../../../../core/application/pagination/page-result';
+import { PageResult } from '../../../../../../core/application/pagination/page-result';
 
-import { CompanyRepository } from '../../../domain/repositories/company.repository';
+import { CompanyRepository } from '../../../../company/domain/repositories/company.repository';
 
 import { CompanyResponseMapper } from '../../../presentation/mappers/company-response.mapper';
 

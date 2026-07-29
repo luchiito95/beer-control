@@ -1,4 +1,4 @@
-import { PageResult } from '../../../../core/application/pagination/page-result';
+import { PageResult } from '../../../../../core/application/pagination/page-result';
 
 import { Company } from '../../domain/entities/company.entity';
 

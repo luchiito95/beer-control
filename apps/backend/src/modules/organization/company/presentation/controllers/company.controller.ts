@@ -23,8 +23,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { PageResult } from '../../../../core/application/pagination/page-result';
-import { PaginationQueryDto } from '../../../../core/presentation/dto/pagination-query.dto';
+import { PageResult } from '../../../../../core/application/pagination/page-result';
+import { PaginationQueryDto } from '../../../../../core/presentation/dto/pagination-query.dto';
 
 import { CreateCompanyCommand } from '../../application/create-company/create-company.command';
 import { CreateCompanyResult } from '../../application/create-company/create-company.result';

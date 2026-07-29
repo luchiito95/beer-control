@@ -1,4 +1,4 @@
-import { BaseEntityProps } from '../../../../core/domain/entities/base-entity.props';
+import { BaseEntityProps } from '../../../../../core/domain/entities/base-entity.props';
 import { CompanyStatus } from '../enums/company-status.enum';
 
 export interface CompanyProps extends BaseEntityProps {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PageRequest } from '../../../../../core/application/pagination/page-request';
-import { PageResult } from '../../../../../core/application/pagination/page-result';
-import { PrismaService } from '../../../../../database/prisma/prisma.service';
+import { PageRequest } from '../../../../../../core/application/pagination/page-request';
+import { PageResult } from '../../../../../../core/application/pagination/page-result';
+import { PrismaService } from '../../../../../../database/prisma/prisma.service';
 
 import { Company } from '../../../domain/entities/company.entity';
 import { CompanyRepository } from '../../../domain/repositories/company.repository';

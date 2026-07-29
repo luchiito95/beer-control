@@ -1,4 +1,4 @@
-import { BaseEntity } from '../../../../core/domain/entities/base.entity';
+import { BaseEntity } from '../../../../../core/domain/entities/base.entity';
 import { CompanyStatus } from '../enums/company-status.enum';
 import { CompanyProps } from './company.props';
 

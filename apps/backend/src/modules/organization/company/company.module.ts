@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { DatabaseModule } from '../../database/database.module';
+import { DatabaseModule } from '../../../database/database.module';
 
 import { CompanyRepository } from './domain/repositories/company.repository';
 
@@ -48,4 +48,4 @@ const QueryHandlers = [
     CompanyRepository,
   ],
 })
-export class IdentityModule {}
+export class CompanyModule  {}

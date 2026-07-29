@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
-import { Company } from '../../domain/entities/company.entity';
-import { CompanyStatus } from '../../domain/enums/company-status.enum';
-import { CompanyRepository } from '../../domain/repositories/company.repository';
+import { Company } from '../../../company/domain/entities/company.entity';
+import { CompanyStatus } from '../../../company/domain/enums/company-status.enum';
+import { CompanyRepository } from '../../../company/domain/repositories/company.repository';
 
 import { CreateCompanyCommand } from './create-company.command';
 import { CreateCompanyResult } from './create-company.result';

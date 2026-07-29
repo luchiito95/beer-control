@@ -3,7 +3,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { CompanyRepository } from '../../../domain/repositories/company.repository';
+import { CompanyRepository } from '../../../../company/domain/repositories/company.repository';
 
 import { GetCompanyQuery } from './get-company.query';
 import { GetCompanyResult } from './get-company.result';
