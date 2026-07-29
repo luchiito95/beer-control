@@ -93,14 +93,13 @@ Actualmente el proyecto se encuentra organizado por dominios funcionales.
 ```text
 modules/
 
-organization/
-│
-├── company
-└── branch
+Organization
+├── Company       ✅
+└── Branch        ✅
 
-inventory/
-│
-└── warehouse
+Inventory
+├── Warehouse     ✅
+└── Category      ✅
 ```
 
 ---
@@ -351,7 +350,7 @@ Antes de considerar un módulo terminado debe verificarse:
 | Módulo | Estado |
 |---------|--------|
 | Warehouse | ✅ |
-| Category | ⏳ |
+| Category | ✅ |
 | Brand | ⏳ |
 | Unit | ⏳ |
 | Product | ⏳ |
@@ -450,23 +449,6 @@ npx prisma generate
 ```bash
 npm run start:dev
 ```
-
----
-
-# 🚀 Roadmap
-
-Próximos módulos a implementar:
-
-1. Category
-2. Brand
-3. Unit
-4. Product
-5. Inventory
-6. Inventory Movement
-7. Supplier
-8. Purchase
-9. Customer
-10. Sales
 
 ---
 

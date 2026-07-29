@@ -30,6 +30,11 @@ enum WarehouseStatus {
   INACTIVE
 }
 
+enum CategoryStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Company {
   id           String        @id @default(cuid())
   name         String
@@ -41,8 +46,9 @@ model Company {
   timezone     String        @default("America/Bogota")
   status       CompanyStatus @default(TRIAL)
 
-  // Relación
+  // Relaciones
   branches Branch[]
+  categories Category[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -106,4 +112,25 @@ model Warehouse {
   @@unique([branchId, code])
 
   @@map("warehouses")
+}
+
+model Category {
+  id          String         @id @default(cuid())
+
+  companyId   String
+  company     Company        @relation(fields: [companyId], references: [id])
+
+  code        String
+  name        String
+  description String?
+
+  status      CategoryStatus @default(ACTIVE)
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([status])
 }
