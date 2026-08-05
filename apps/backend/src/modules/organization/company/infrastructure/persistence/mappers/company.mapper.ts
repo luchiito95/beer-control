@@ -63,9 +63,7 @@ export class CompanyMapper {
   /**
    * Enum Prisma -> Domain
    */
-  private static toDomainStatus(
-    status: PrismaCompanyStatus,
-  ): CompanyStatus {
+  private static toDomainStatus(status: PrismaCompanyStatus): CompanyStatus {
     switch (status) {
       case PrismaCompanyStatus.TRIAL:
         return CompanyStatus.TRIAL;
@@ -87,9 +85,7 @@ export class CompanyMapper {
   /**
    * Enum Domain -> Prisma
    */
-  private static toPrismaStatus(
-    status: CompanyStatus,
-  ): PrismaCompanyStatus {
+  private static toPrismaStatus(status: CompanyStatus): PrismaCompanyStatus {
     switch (status) {
       case CompanyStatus.TRIAL:
         return PrismaCompanyStatus.TRIAL;

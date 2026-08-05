@@ -11,15 +11,14 @@ import { map } from 'rxjs/operators';
 import { SuccessResponse } from '../responses/success-response';
 
 @Injectable()
-export class ResponseInterceptor<T>
-  implements NestInterceptor<T, SuccessResponse<T>>
-{
+export class ResponseInterceptor<T> implements NestInterceptor<
+  T,
+  SuccessResponse<T>
+> {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<SuccessResponse<T>> {
-    return next.handle().pipe(
-      map((data) => new SuccessResponse(true, data)),
-    );
+    return next.handle().pipe(map((data) => new SuccessResponse(true, data)));
   }
 }

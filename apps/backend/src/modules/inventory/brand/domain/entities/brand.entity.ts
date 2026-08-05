@@ -72,11 +72,8 @@ export class BrandEntity extends BaseEntity {
     this._name = name.trim();
   }
 
-  changeDescription(
-    description: string | null,
-  ): void {
-    this._description =
-      description?.trim() || null;
+  changeDescription(description: string | null): void {
+    this._description = description?.trim() || null;
   }
 
   update(props: {
@@ -95,21 +92,15 @@ export class BrandEntity extends BaseEntity {
 
   private validate(): void {
     if (!this._companyId.trim()) {
-      throw new Error(
-        'Company ID is required.',
-      );
+      throw new Error('Company ID is required.');
     }
 
     if (!this._code.trim()) {
-      throw new Error(
-        'Brand code is required.',
-      );
+      throw new Error('Brand code is required.');
     }
 
     if (!this._name.trim()) {
-      throw new Error(
-        'Brand name is required.',
-      );
+      throw new Error('Brand name is required.');
     }
   }
 }

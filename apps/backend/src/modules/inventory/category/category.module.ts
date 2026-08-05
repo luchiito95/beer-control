@@ -15,7 +15,7 @@ import { UpdateCategoryUseCase } from './application/update-category/update-cate
 import { DeleteCategoryUseCase } from './application/delete-category/delete-category.use-case';
 
 import { GetCategoryUseCase } from './application/queries/get-category/get-category.use-case';
-import { ListCategoriesUseCase } from './application/queries/list-categories/list-categories.use-case';
+import { SearchCategoriesUseCase } from './application/queries/search-categories/search-categories.use-case';
 
 const CommandHandlers = [
   CreateCategoryUseCase,
@@ -23,20 +23,12 @@ const CommandHandlers = [
   DeleteCategoryUseCase,
 ];
 
-const QueryHandlers = [
-  GetCategoryUseCase,
-  ListCategoriesUseCase,
-];
+const QueryHandlers = [GetCategoryUseCase, SearchCategoriesUseCase];
 
 @Module({
-  imports: [
-    DatabaseModule,
-    CompanyModule,
-  ],
+  imports: [DatabaseModule, CompanyModule],
 
-  controllers: [
-    CategoryController,
-  ],
+  controllers: [CategoryController],
 
   providers: [
     ...CommandHandlers,
@@ -47,8 +39,6 @@ const QueryHandlers = [
     },
   ],
 
-  exports: [
-    CategoryRepository,
-  ],
+  exports: [CategoryRepository],
 })
 export class CategoryModule {}

@@ -1,0 +1,1 @@
+export * from './inventory-movement-response.mapper';

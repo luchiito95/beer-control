@@ -9,17 +9,13 @@ import { CreateCompanyResult } from './create-company.result';
 
 @Injectable()
 export class CreateCompanyUseCase {
-  constructor(
-    private readonly companyRepository: CompanyRepository,
-  ) {}
+  constructor(private readonly companyRepository: CompanyRepository) {}
 
-  async execute(
-    command: CreateCompanyCommand,
-  ): Promise<CreateCompanyResult> {
-
+  async execute(command: CreateCompanyCommand): Promise<CreateCompanyResult> {
     if (command.taxId) {
-      const existingCompany =
-        await this.companyRepository.findByTaxId(command.taxId);
+      const existingCompany = await this.companyRepository.findByTaxId(
+        command.taxId,
+      );
 
       if (existingCompany) {
         throw new ConflictException(
@@ -43,8 +39,7 @@ export class CreateCompanyUseCase {
       deletedAt: null,
     });
 
-    const createdCompany =
-      await this.companyRepository.create(company);
+    const createdCompany = await this.companyRepository.create(company);
 
     return new CreateCompanyResult(
       createdCompany.id,

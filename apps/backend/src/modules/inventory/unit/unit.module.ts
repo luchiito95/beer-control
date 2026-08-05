@@ -15,7 +15,7 @@ import { UpdateUnitUseCase } from './application/update-unit/update-unit.use-cas
 import { DeleteUnitUseCase } from './application/delete-unit/delete-unit.use-case';
 
 import { GetUnitUseCase } from './application/queries/get-unit/get-unit.use-case';
-import { ListUnitsUseCase } from './application/queries/list-units/list-units.use-case';
+import { SearchUnitsUseCase } from './application/queries/search-units/search-units.use-case';
 
 const CommandHandlers = [
   CreateUnitUseCase,
@@ -23,20 +23,12 @@ const CommandHandlers = [
   DeleteUnitUseCase,
 ];
 
-const QueryHandlers = [
-  GetUnitUseCase,
-  ListUnitsUseCase,
-];
+const QueryHandlers = [GetUnitUseCase, SearchUnitsUseCase];
 
 @Module({
-  imports: [
-    DatabaseModule,
-    CompanyModule,
-  ],
+  imports: [DatabaseModule, CompanyModule],
 
-  controllers: [
-    UnitController,
-  ],
+  controllers: [UnitController],
 
   providers: [
     ...CommandHandlers,
@@ -47,8 +39,6 @@ const QueryHandlers = [
     },
   ],
 
-  exports: [
-    UnitRepository,
-  ],
+  exports: [UnitRepository],
 })
 export class UnitModule {}

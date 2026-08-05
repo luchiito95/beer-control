@@ -1,10 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import {
-  DocumentBuilder,
-  SwaggerModule,
-} from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 
@@ -37,16 +34,12 @@ async function bootstrap(): Promise<void> {
   /**
    * Global Response Wrapper
    */
-  app.useGlobalInterceptors(
-    new ResponseInterceptor(),
-  );
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   /**
    * Global Exception Filter
    */
-  app.useGlobalFilters(
-    new GlobalExceptionFilter(),
-  );
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   /**
    * CORS
@@ -61,31 +54,21 @@ async function bootstrap(): Promise<void> {
    */
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Beer Control API')
-    .setDescription(
-      'REST API for Beer Control ERP Platform',
-    )
+    .setDescription('REST API for Beer Control ERP Platform')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
 
-  const swaggerDocument = SwaggerModule.createDocument(
-    app,
-    swaggerConfig,
-  );
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 
-  SwaggerModule.setup(
-    'docs',
-    app,
-    swaggerDocument,
-    {
-      customSiteTitle: 'Beer Control API',
-      swaggerOptions: {
-        persistAuthorization: true,
-        displayRequestDuration: true,
-        docExpansion: 'none',
-      },
+  SwaggerModule.setup('docs', app, swaggerDocument, {
+    customSiteTitle: 'Beer Control API',
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+      docExpansion: 'none',
     },
-  );
+  });
 
   /**
    * Start Application

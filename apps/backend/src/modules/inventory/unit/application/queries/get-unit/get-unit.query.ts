@@ -1,5 +1,3 @@
 export class GetUnitQuery {
-  constructor(
-    public readonly id: string,
-  ) {}
+  constructor(public readonly id: string) {}
 }

@@ -20,23 +20,17 @@ export class CreateBranchUseCase {
     private readonly companyRepository: CompanyRepository,
   ) {}
 
-  async execute(
-    command: CreateBranchCommand,
-  ): Promise<CreateBranchResult> {
-
+  async execute(command: CreateBranchCommand): Promise<CreateBranchResult> {
     const company = await this.companyRepository.findById(command.companyId);
 
     if (!company) {
-      throw new NotFoundException(
-        `Company '${command.companyId}' not found.`,
-      );
+      throw new NotFoundException(`Company '${command.companyId}' not found.`);
     }
 
-    const existingBranch =
-      await this.branchRepository.findByCompanyAndCode(
-        command.companyId,
-        command.code,
-      );
+    const existingBranch = await this.branchRepository.findByCompanyAndCode(
+      command.companyId,
+      command.code,
+    );
 
     if (existingBranch) {
       throw new ConflictException(
@@ -63,8 +57,7 @@ export class CreateBranchUseCase {
       deletedAt: null,
     });
 
-    const createdBranch =
-      await this.branchRepository.create(branch);
+    const createdBranch = await this.branchRepository.create(branch);
 
     return new CreateBranchResult(
       createdBranch.id,

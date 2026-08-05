@@ -11,9 +11,7 @@ export class CategoryMapper {
   /**
    * Prisma -> Domain
    */
-  static toDomain(
-    prismaCategory: PrismaCategory,
-  ): CategoryEntity {
+  static toDomain(prismaCategory: PrismaCategory): CategoryEntity {
     return new CategoryEntity({
       id: prismaCategory.id,
       companyId: prismaCategory.companyId,
@@ -30,9 +28,7 @@ export class CategoryMapper {
   /**
    * Domain -> Prisma Create
    */
-  static toCreate(
-    category: CategoryEntity,
-  ): Prisma.CategoryCreateInput {
+  static toCreate(category: CategoryEntity): Prisma.CategoryCreateInput {
     return {
       company: {
         connect: {
@@ -49,9 +45,7 @@ export class CategoryMapper {
   /**
    * Domain -> Prisma Update
    */
-  static toUpdate(
-    category: CategoryEntity,
-  ): Prisma.CategoryUpdateInput {
+  static toUpdate(category: CategoryEntity): Prisma.CategoryUpdateInput {
     return {
       code: category.code,
       name: category.name,
@@ -63,9 +57,7 @@ export class CategoryMapper {
   /**
    * Enum Prisma -> Domain
    */
-  private static toDomainStatus(
-    status: PrismaCategoryStatus,
-  ): CategoryStatus {
+  private static toDomainStatus(status: PrismaCategoryStatus): CategoryStatus {
     switch (status) {
       case PrismaCategoryStatus.ACTIVE:
         return CategoryStatus.ACTIVE;
@@ -74,18 +66,14 @@ export class CategoryMapper {
         return CategoryStatus.INACTIVE;
 
       default:
-        throw new Error(
-          `Unknown category status: ${status}`,
-        );
+        throw new Error(`Unknown category status: ${status}`);
     }
   }
 
   /**
    * Enum Domain -> Prisma
    */
-  private static toPrismaStatus(
-    status: CategoryStatus,
-  ): PrismaCategoryStatus {
+  private static toPrismaStatus(status: CategoryStatus): PrismaCategoryStatus {
     switch (status) {
       case CategoryStatus.ACTIVE:
         return PrismaCategoryStatus.ACTIVE;
@@ -94,9 +82,7 @@ export class CategoryMapper {
         return PrismaCategoryStatus.INACTIVE;
 
       default:
-        throw new Error(
-          `Unknown category status: ${status}`,
-        );
+        throw new Error(`Unknown category status: ${status}`);
     }
   }
 }

@@ -10,28 +10,20 @@ import { UpdateBranchResult } from './update-branch.result';
 
 @Injectable()
 export class UpdateBranchUseCase {
-  constructor(
-    private readonly branchRepository: BranchRepository,
-  ) {}
+  constructor(private readonly branchRepository: BranchRepository) {}
 
-  async execute(
-    command: UpdateBranchCommand,
-  ): Promise<UpdateBranchResult> {
-
+  async execute(command: UpdateBranchCommand): Promise<UpdateBranchResult> {
     const branch = await this.branchRepository.findById(command.id);
 
     if (!branch) {
-      throw new NotFoundException(
-        `Branch '${command.id}' not found.`,
-      );
+      throw new NotFoundException(`Branch '${command.id}' not found.`);
     }
 
     if (branch.code !== command.code) {
-      const existingBranch =
-        await this.branchRepository.findByCompanyAndCode(
-          branch.companyId,
-          command.code,
-        );
+      const existingBranch = await this.branchRepository.findByCompanyAndCode(
+        branch.companyId,
+        command.code,
+      );
 
       if (existingBranch && existingBranch.id !== branch.id) {
         throw new ConflictException(
@@ -53,8 +45,7 @@ export class UpdateBranchUseCase {
       timezone: command.timezone,
     });
 
-    const updated =
-      await this.branchRepository.update(branch);
+    const updated = await this.branchRepository.update(branch);
 
     return new UpdateBranchResult(
       updated.id,

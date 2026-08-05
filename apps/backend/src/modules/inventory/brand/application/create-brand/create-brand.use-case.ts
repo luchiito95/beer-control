@@ -20,26 +20,17 @@ export class CreateBrandUseCase {
     private readonly companyRepository: CompanyRepository,
   ) {}
 
-  async execute(
-    command: CreateBrandCommand,
-  ): Promise<CreateBrandResult> {
-
-    const company =
-      await this.companyRepository.findById(
-        command.companyId,
-      );
+  async execute(command: CreateBrandCommand): Promise<CreateBrandResult> {
+    const company = await this.companyRepository.findById(command.companyId);
 
     if (!company) {
-      throw new NotFoundException(
-        `Company '${command.companyId}' not found.`,
-      );
+      throw new NotFoundException(`Company '${command.companyId}' not found.`);
     }
 
-    const existingBrand =
-      await this.brandRepository.findByCompanyAndCode(
-        command.companyId,
-        command.code,
-      );
+    const existingBrand = await this.brandRepository.findByCompanyAndCode(
+      command.companyId,
+      command.code,
+    );
 
     if (existingBrand) {
       throw new ConflictException(
@@ -59,8 +50,7 @@ export class CreateBrandUseCase {
       deletedAt: null,
     });
 
-    const createdBrand =
-      await this.brandRepository.create(brand);
+    const createdBrand = await this.brandRepository.create(brand);
 
     return new CreateBrandResult(
       createdBrand.id,

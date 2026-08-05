@@ -15,7 +15,7 @@ import { UpdateBranchUseCase } from './application/update-branch/update-branch.u
 import { DeleteBranchUseCase } from './application/delete-branch/delete-branch.use-case';
 
 import { GetBranchUseCase } from './application/queries/get-branch/get-branch.use-case';
-import { ListBranchesUseCase } from './application/queries/list-branches/list-branches.use-case';
+import { SearchBranchesUseCase } from './application/queries/search-branches/search-branches.use-case';
 
 const CommandHandlers = [
   CreateBranchUseCase,
@@ -23,20 +23,12 @@ const CommandHandlers = [
   DeleteBranchUseCase,
 ];
 
-const QueryHandlers = [
-  GetBranchUseCase,
-  ListBranchesUseCase,
-];
+const QueryHandlers = [GetBranchUseCase, SearchBranchesUseCase];
 
 @Module({
-  imports: [
-    DatabaseModule,
-    CompanyModule,
-  ],
+  imports: [DatabaseModule, CompanyModule],
 
-  controllers: [
-    BranchController,
-  ],
+  controllers: [BranchController],
 
   providers: [
     ...CommandHandlers,
@@ -47,8 +39,6 @@ const QueryHandlers = [
     },
   ],
 
-  exports: [
-    BranchRepository,
-  ],
+  exports: [BranchRepository],
 })
 export class BranchModule {}

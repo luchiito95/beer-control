@@ -20,26 +20,17 @@ export class CreateUnitUseCase {
     private readonly companyRepository: CompanyRepository,
   ) {}
 
-  async execute(
-    command: CreateUnitCommand,
-  ): Promise<CreateUnitResult> {
-
-    const company =
-      await this.companyRepository.findById(
-        command.companyId,
-      );
+  async execute(command: CreateUnitCommand): Promise<CreateUnitResult> {
+    const company = await this.companyRepository.findById(command.companyId);
 
     if (!company) {
-      throw new NotFoundException(
-        `Company '${command.companyId}' not found.`,
-      );
+      throw new NotFoundException(`Company '${command.companyId}' not found.`);
     }
 
-    const existingUnit =
-      await this.unitRepository.findByCompanyAndCode(
-        command.companyId,
-        command.code,
-      );
+    const existingUnit = await this.unitRepository.findByCompanyAndCode(
+      command.companyId,
+      command.code,
+    );
 
     if (existingUnit) {
       throw new ConflictException(
@@ -60,8 +51,7 @@ export class CreateUnitUseCase {
       deletedAt: null,
     });
 
-    const createdUnit =
-      await this.unitRepository.create(unit);
+    const createdUnit = await this.unitRepository.create(unit);
 
     return new CreateUnitResult(
       createdUnit.id,

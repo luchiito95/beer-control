@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UnitRepository } from '../../../domain/repositories/unit.repository';
 
@@ -10,21 +7,13 @@ import { GetUnitResult } from './get-unit.result';
 
 @Injectable()
 export class GetUnitUseCase {
-  constructor(
-    private readonly repository: UnitRepository,
-  ) {}
+  constructor(private readonly repository: UnitRepository) {}
 
-  async execute(
-    query: GetUnitQuery,
-  ): Promise<GetUnitResult> {
-
-    const unit =
-      await this.repository.findById(query.id);
+  async execute(query: GetUnitQuery): Promise<GetUnitResult> {
+    const unit = await this.repository.findById(query.id);
 
     if (!unit) {
-      throw new NotFoundException(
-        `Unit '${query.id}' not found.`,
-      );
+      throw new NotFoundException(`Unit '${query.id}' not found.`);
     }
 
     return new GetUnitResult(

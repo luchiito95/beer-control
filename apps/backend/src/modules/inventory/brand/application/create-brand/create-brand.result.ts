@@ -1,4 +1,3 @@
-
 export class CreateBrandResult {
   constructor(
     public readonly id: string,

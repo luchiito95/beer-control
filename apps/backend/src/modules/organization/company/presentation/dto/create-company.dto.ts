@@ -47,8 +47,7 @@ export class CreateCompanyDto {
   })
   @IsOptional()
   @Matches(/^[0-9-]+$/, {
-    message:
-      'The tax ID may only contain numbers and hyphens.',
+    message: 'The tax ID may only contain numbers and hyphens.',
   })
   @MaxLength(30, {
     message: 'The tax ID cannot exceed 30 characters.',
@@ -93,8 +92,7 @@ export class CreateCompanyDto {
   })
   @IsOptional()
   @Matches(/^[A-Z]{3}$/, {
-    message:
-      'Currency code must be a valid ISO 4217 code.',
+    message: 'Currency code must be a valid ISO 4217 code.',
   })
   readonly currencyCode?: string = 'COP';
 

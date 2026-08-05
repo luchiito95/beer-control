@@ -20,26 +20,17 @@ export class CreateCategoryUseCase {
     private readonly companyRepository: CompanyRepository,
   ) {}
 
-  async execute(
-    command: CreateCategoryCommand,
-  ): Promise<CreateCategoryResult> {
-
-    const company =
-      await this.companyRepository.findById(
-        command.companyId,
-      );
+  async execute(command: CreateCategoryCommand): Promise<CreateCategoryResult> {
+    const company = await this.companyRepository.findById(command.companyId);
 
     if (!company) {
-      throw new NotFoundException(
-        `Company '${command.companyId}' not found.`,
-      );
+      throw new NotFoundException(`Company '${command.companyId}' not found.`);
     }
 
-    const existingCategory =
-      await this.categoryRepository.findByCompanyAndCode(
-        command.companyId,
-        command.code,
-      );
+    const existingCategory = await this.categoryRepository.findByCompanyAndCode(
+      command.companyId,
+      command.code,
+    );
 
     if (existingCategory) {
       throw new ConflictException(
@@ -59,8 +50,7 @@ export class CreateCategoryUseCase {
       deletedAt: null,
     });
 
-    const createdCategory =
-      await this.categoryRepository.create(category);
+    const createdCategory = await this.categoryRepository.create(category);
 
     return new CreateCategoryResult(
       createdCategory.id,

@@ -78,9 +78,7 @@ export class BranchMapper {
   /**
    * Enum Prisma -> Domain
    */
-  private static toDomainStatus(
-    status: PrismaBranchStatus,
-  ): BranchStatus {
+  private static toDomainStatus(status: PrismaBranchStatus): BranchStatus {
     switch (status) {
       case PrismaBranchStatus.ACTIVE:
         return BranchStatus.ACTIVE;
@@ -96,9 +94,7 @@ export class BranchMapper {
   /**
    * Enum Domain -> Prisma
    */
-  private static toPrismaStatus(
-    status: BranchStatus,
-  ): PrismaBranchStatus {
+  private static toPrismaStatus(status: BranchStatus): PrismaBranchStatus {
     switch (status) {
       case BranchStatus.ACTIVE:
         return PrismaBranchStatus.ACTIVE;

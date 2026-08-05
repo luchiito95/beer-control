@@ -1,0 +1,19 @@
+export enum InventoryMovementType {
+
+  INITIAL = 'INITIAL',
+
+  PURCHASE = 'PURCHASE',
+
+  SALE = 'SALE',
+
+  TRANSFER_IN = 'TRANSFER_IN',
+
+  TRANSFER_OUT = 'TRANSFER_OUT',
+
+  ADJUSTMENT = 'ADJUSTMENT',
+
+  RETURN = 'RETURN',
+
+  CORRECTION = 'CORRECTION',
+
+}

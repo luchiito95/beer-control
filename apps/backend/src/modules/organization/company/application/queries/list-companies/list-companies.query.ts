@@ -1,6 +1,0 @@
-export class ListCompaniesQuery {
-  constructor(
-    public readonly page: number = 1,
-    public readonly pageSize: number = 10,
-  ) {}
-}

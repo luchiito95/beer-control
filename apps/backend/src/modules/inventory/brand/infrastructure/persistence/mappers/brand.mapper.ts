@@ -11,9 +11,7 @@ export class BrandMapper {
   /**
    * Prisma -> Domain
    */
-  static toDomain(
-    prismaBrand: PrismaBrand,
-  ): BrandEntity {
+  static toDomain(prismaBrand: PrismaBrand): BrandEntity {
     return new BrandEntity({
       id: prismaBrand.id,
       companyId: prismaBrand.companyId,
@@ -30,9 +28,7 @@ export class BrandMapper {
   /**
    * Domain -> Prisma Create
    */
-  static toCreate(
-    brand: BrandEntity,
-  ): Prisma.BrandCreateInput {
+  static toCreate(brand: BrandEntity): Prisma.BrandCreateInput {
     return {
       company: {
         connect: {
@@ -49,9 +45,7 @@ export class BrandMapper {
   /**
    * Domain -> Prisma Update
    */
-  static toUpdate(
-    brand: BrandEntity,
-  ): Prisma.BrandUpdateInput {
+  static toUpdate(brand: BrandEntity): Prisma.BrandUpdateInput {
     return {
       code: brand.code,
       name: brand.name,
@@ -63,9 +57,7 @@ export class BrandMapper {
   /**
    * Enum Prisma -> Domain
    */
-  private static toDomainStatus(
-    status: PrismaBrandStatus,
-  ): BrandStatus {
+  private static toDomainStatus(status: PrismaBrandStatus): BrandStatus {
     switch (status) {
       case PrismaBrandStatus.ACTIVE:
         return BrandStatus.ACTIVE;
@@ -74,18 +66,14 @@ export class BrandMapper {
         return BrandStatus.INACTIVE;
 
       default:
-        throw new Error(
-          `Unknown brand status: ${status}`,
-        );
+        throw new Error(`Unknown brand status: ${status}`);
     }
   }
 
   /**
    * Enum Domain -> Prisma
    */
-  private static toPrismaStatus(
-    status: BrandStatus,
-  ): PrismaBrandStatus {
+  private static toPrismaStatus(status: BrandStatus): PrismaBrandStatus {
     switch (status) {
       case BrandStatus.ACTIVE:
         return PrismaBrandStatus.ACTIVE;
@@ -94,9 +82,7 @@ export class BrandMapper {
         return PrismaBrandStatus.INACTIVE;
 
       default:
-        throw new Error(
-          `Unknown brand status: ${status}`,
-        );
+        throw new Error(`Unknown brand status: ${status}`);
     }
   }
 }

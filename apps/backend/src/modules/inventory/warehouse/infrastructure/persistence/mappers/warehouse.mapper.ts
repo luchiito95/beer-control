@@ -28,9 +28,7 @@ export class WarehouseMapper {
   /**
    * Domain -> Prisma Create
    */
-  static toCreate(
-    warehouse: WarehouseEntity,
-  ): Prisma.WarehouseCreateInput {
+  static toCreate(warehouse: WarehouseEntity): Prisma.WarehouseCreateInput {
     return {
       branch: {
         connect: {
@@ -47,9 +45,7 @@ export class WarehouseMapper {
   /**
    * Domain -> Prisma Update
    */
-  static toUpdate(
-    warehouse: WarehouseEntity,
-  ): Prisma.WarehouseUpdateInput {
+  static toUpdate(warehouse: WarehouseEntity): Prisma.WarehouseUpdateInput {
     return {
       code: warehouse.code,
       name: warehouse.name,

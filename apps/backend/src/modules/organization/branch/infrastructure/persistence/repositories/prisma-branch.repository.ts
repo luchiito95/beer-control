@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { PageRequest } from '../../../../../../core/application/pagination/page-request';
-import { PageResult } from '../../../../../../core/application/pagination/page-result';
+import { SearchCriteria } from '../../../../../../core/application/search/search-criteria';
+import { SearchPage } from '../../../../../../core/application/search/search-page';
+
 import { PrismaService } from '../../../../../../database/prisma/prisma.service';
 
 import { BranchEntity } from '../../../domain/entities/branch.entity';
 import { BranchRepository } from '../../../domain/repositories/branch.repository';
 
 import { BranchMapper } from '../mappers/branch.mapper';
+import { PrismaSearchMapper } from '@database/prisma';
 
 @Injectable()
 export class PrismaBranchRepository extends BranchRepository {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {
+  constructor(private readonly prisma: PrismaService) {
     super();
   }
 
@@ -29,6 +29,7 @@ export class PrismaBranchRepository extends BranchRepository {
     const branch = await this.prisma.branch.findFirst({
       where: {
         id,
+
         deletedAt: null,
       },
     });
@@ -36,37 +37,40 @@ export class PrismaBranchRepository extends BranchRepository {
     return branch ? BranchMapper.toDomain(branch) : null;
   }
 
-  async findAll(
-    page: number,
-    pageSize: number,
-  ): Promise<PageResult<BranchEntity>> {
-    const pagination = new PageRequest(page, pageSize);
+  async search(criteria: SearchCriteria): Promise<SearchPage<BranchEntity>> {
+    const query = PrismaSearchMapper.toQuery(criteria);
 
-    const [branches, totalItems] = await this.prisma.$transaction([
+    const [branches, totalItems] = await Promise.all([
       this.prisma.branch.findMany({
         where: {
+          ...query.where,
+
           deletedAt: null,
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        skip: pagination.skip,
-        take: pagination.take,
+
+        orderBy: query.orderBy,
+
+        skip: (criteria.page - 1) * criteria.pageSize,
+
+        take: criteria.pageSize,
       }),
 
       this.prisma.branch.count({
         where: {
+          ...query.where,
+
           deletedAt: null,
         },
       }),
     ]);
 
-    return new PageResult(
-      branches.map(branch => BranchMapper.toDomain(branch)),
-      page,
-      pageSize,
+    return new SearchPage({
+      items: branches.map((branch) => BranchMapper.toDomain(branch)),
+
+      criteria,
+
       totalItems,
-    );
+    });
   }
 
   async findByCompanyAndCode(
@@ -76,7 +80,9 @@ export class PrismaBranchRepository extends BranchRepository {
     const branch = await this.prisma.branch.findFirst({
       where: {
         companyId,
+
         code,
+
         deletedAt: null,
       },
     });
@@ -89,6 +95,7 @@ export class PrismaBranchRepository extends BranchRepository {
       where: {
         id: branch.id,
       },
+
       data: BranchMapper.toUpdate(branch),
     });
 
@@ -100,6 +107,7 @@ export class PrismaBranchRepository extends BranchRepository {
       where: {
         id,
       },
+
       data: {
         deletedAt: new Date(),
       },

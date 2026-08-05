@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
-import { PageRequest } from '../../../../../../core/application/pagination/page-request';
-import { PageResult } from '../../../../../../core/application/pagination/page-result';
+import { SearchCriteria } from '../../../../../../core/application/search/search-criteria';
+import { SearchPage } from '../../../../../../core/application/search/search-page';
+
+
 import { PrismaService } from '../../../../../../database/prisma/prisma.service';
 
 import { Company } from '../../../domain/entities/company.entity';
 import { CompanyRepository } from '../../../domain/repositories/company.repository';
 
 import { CompanyMapper } from '../mappers/company.mapper';
+import { PrismaSearchMapper } from '@database/prisma';
 
 @Injectable()
 export class PrismaCompanyRepository extends CompanyRepository {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {
+  constructor(private readonly prisma: PrismaService) {
     super();
   }
 
@@ -29,6 +30,7 @@ export class PrismaCompanyRepository extends CompanyRepository {
     const company = await this.prisma.company.findFirst({
       where: {
         id,
+
         deletedAt: null,
       },
     });
@@ -36,42 +38,43 @@ export class PrismaCompanyRepository extends CompanyRepository {
     return company ? CompanyMapper.toDomain(company) : null;
   }
 
-  async findAll(
-    page: number,
-    pageSize: number,
-  ): Promise<PageResult<Company>> {
-    const pagination = new PageRequest(page, pageSize);
+  async search(criteria: SearchCriteria): Promise<SearchPage<Company>> {
+    const query = PrismaSearchMapper.toQuery(criteria);
 
-    const [companies, totalItems] = await this.prisma.$transaction([
+    const [companies, totalItems] = await Promise.all([
       this.prisma.company.findMany({
         where: {
+          ...query.where,
+
           deletedAt: null,
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        skip: pagination.skip,
-        take: pagination.take,
+
+        orderBy: query.orderBy,
+
+        skip: (criteria.page - 1) * criteria.pageSize,
+
+        take: criteria.pageSize,
       }),
 
       this.prisma.company.count({
         where: {
+          ...query.where,
+
           deletedAt: null,
         },
       }),
     ]);
 
-    return new PageResult(
-      companies.map(company => CompanyMapper.toDomain(company)),
-      page,
-      pageSize,
+    return new SearchPage({
+      items: companies.map((company) => CompanyMapper.toDomain(company)),
+
+      criteria,
+
       totalItems,
-    );
+    });
   }
 
-  async findByTaxId(
-    taxId: string | null,
-  ): Promise<Company | null> {
+  async findByTaxId(taxId: string | null): Promise<Company | null> {
     if (!taxId) {
       return null;
     }
@@ -79,6 +82,7 @@ export class PrismaCompanyRepository extends CompanyRepository {
     const company = await this.prisma.company.findFirst({
       where: {
         taxId,
+
         deletedAt: null,
       },
     });
@@ -91,6 +95,7 @@ export class PrismaCompanyRepository extends CompanyRepository {
       where: {
         id: company.id,
       },
+
       data: CompanyMapper.toUpdate(company),
     });
 
@@ -102,6 +107,7 @@ export class PrismaCompanyRepository extends CompanyRepository {
       where: {
         id,
       },
+
       data: {
         deletedAt: new Date(),
       },

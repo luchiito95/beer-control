@@ -1,14 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
-  Patch,
-  Delete,
 } from '@nestjs/common';
 
 import {
@@ -23,49 +23,47 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { PageResult } from '../../../../../core/application/pagination/page-result';
-import { PaginationQueryDto } from '../../../../../core/presentation/dto/pagination-query.dto';
+import { SearchPage } from '../../../../../core/application/search/search-page';
 
-import { CreateCompanyCommand } from '../../application/create-company/create-company.command';
-import { CreateCompanyResult } from '../../application/create-company/create-company.result';
 import { CreateCompanyUseCase } from '../../application/create-company/create-company.use-case';
-
-import { GetCompanyQuery } from '../../application/queries/get-company/get-company.query';
-import { GetCompanyResult } from '../../application/queries/get-company/get-company.result';
-import { GetCompanyUseCase } from '../../application/queries/get-company/get-company.use-case';
-
-import { ListCompaniesQuery } from '../../application/queries/list-companies/list-companies.query';
-import { CompanySummaryResult } from '../../application/queries/list-companies/list-companies.result';
-import { ListCompaniesUseCase } from '../../application/queries/list-companies/list-companies.use-case';
-
-import { UpdateCompanyDto } from '../dto/update-company.dto';
+import { CreateCompanyResult } from '../../application/create-company/create-company.result';
 
 import { UpdateCompanyUseCase } from '../../application/update-company/update-company.use-case';
-import { UpdateCompanyCommand } from '../../application/update-company/update-company.command';
 import { UpdateCompanyResult } from '../../application/update-company/update-company.result';
 
 import { DeleteCompanyUseCase } from '../../application/delete-company/delete-company.use-case';
-import { DeleteCompanyCommand } from '../../application/delete-company/delete-company.command';
 import { DeleteCompanyResult } from '../../application/delete-company/delete-company.result';
 
+import { GetCompanyUseCase } from '../../application/queries/get-company/get-company.use-case';
+import { GetCompanyResult } from '../../application/queries/get-company/get-company.result';
+
+import { SearchCompaniesUseCase } from '../../application/queries/search-companies/search-companies.use-case';
+import { CompanySummaryResult } from '../../application/queries/search-companies/company-summary.result';
+
 import { CreateCompanyDto } from '../dto/create-company.dto';
+import { UpdateCompanyDto } from '../dto/update-company.dto';
+import { SearchCompanyDto } from '../dto/search-company.dto';
+
+import { CompanyCommandMapper } from '../mappers/company-command.mapper';
+import { CompanyQueryMapper } from '../mappers/company-query.mapper';
+import { CompanySearchMapper } from '../mappers/company-search.mapper';
 
 @ApiTags('Companies')
 @Controller('companies')
 export class CompanyController {
   constructor(
     private readonly createCompanyUseCase: CreateCompanyUseCase,
-    private readonly getCompanyUseCase: GetCompanyUseCase,
-    private readonly listCompaniesUseCase: ListCompaniesUseCase,
     private readonly updateCompanyUseCase: UpdateCompanyUseCase,
     private readonly deleteCompanyUseCase: DeleteCompanyUseCase,
-  ) { }
+    private readonly getCompanyUseCase: GetCompanyUseCase,
+    private readonly searchCompaniesUseCase: SearchCompaniesUseCase,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create company',
-    description: 'Creates a new company in the system.',
+    description: 'Creates a new company.',
   })
   @ApiCreatedResponse({
     description: 'Company created successfully.',
@@ -75,21 +73,11 @@ export class CompanyController {
     description: 'Validation error.',
   })
   @ApiConflictResponse({
-    description: 'A company with the same taxId already exists.',
+    description: 'Company tax id already exists.',
   })
-  async create(
-    @Body() dto: CreateCompanyDto,
-  ): Promise<CreateCompanyResult> {
+  async create(@Body() dto: CreateCompanyDto): Promise<CreateCompanyResult> {
     return this.createCompanyUseCase.execute(
-      new CreateCompanyCommand(
-        dto.name,
-        dto.legalName ?? null,
-        dto.taxId ?? null,
-        dto.email ?? null,
-        dto.phone ?? null,
-        dto.currencyCode ?? 'COP',
-        dto.timezone ?? 'America/Bogota',
-      ),
+      CompanyCommandMapper.toCreate(dto),
     );
   }
 
@@ -100,8 +88,7 @@ export class CompanyController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Company identifier',
-    example: 'cms4wwj3q0000w2ugzkvm1upu',
+    description: 'Company identifier.',
   })
   @ApiOkResponse({
     description: 'Company found.',
@@ -110,18 +97,14 @@ export class CompanyController {
   @ApiNotFoundResponse({
     description: 'Company not found.',
   })
-  async findById(
-    @Param('id') id: string,
-  ): Promise<GetCompanyResult> {
-    return this.getCompanyUseCase.execute(
-      new GetCompanyQuery(id),
-    );
+  async findById(@Param('id') id: string): Promise<GetCompanyResult> {
+    return this.getCompanyUseCase.execute(CompanyQueryMapper.toGet(id));
   }
 
   @Get()
   @ApiOperation({
-    summary: 'List companies',
-    description: 'Returns a paginated list of companies.',
+    summary: 'Search companies',
+    description: 'Returns a paginated list of companies using filters.',
   })
   @ApiQuery({
     name: 'page',
@@ -133,53 +116,51 @@ export class CompanyController {
     required: false,
     example: 10,
   })
-  @ApiOkResponse({
-    description: 'Paginated list of companies.',
-  })
-  async findAll(
-    @Query() query: PaginationQueryDto,
-  ): Promise<PageResult<CompanySummaryResult>> {
-    return this.listCompaniesUseCase.execute(
-      new ListCompaniesQuery(
-        query.page,
-        query.pageSize,
-      ),
+  async search(
+    @Query() dto: SearchCompanyDto,
+  ): Promise<SearchPage<CompanySummaryResult>> {
+    return this.searchCompaniesUseCase.execute(
+      CompanyQueryMapper.toSearch(CompanySearchMapper.toCriteria(dto)),
     );
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Update company',
+    description: 'Updates an existing company.',
+  })
+  @ApiOkResponse({
+    description: 'Company updated successfully.',
+    type: UpdateCompanyResult,
+  })
+  @ApiNotFoundResponse({
+    description: 'Company not found.',
+  })
+  @ApiConflictResponse({
+    description: 'Company tax id already exists.',
   })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateCompanyDto,
   ): Promise<UpdateCompanyResult> {
-
     return this.updateCompanyUseCase.execute(
-      new UpdateCompanyCommand(
-        id,
-        dto.name!,
-        dto.legalName ?? null,
-        dto.taxId ?? null,
-        dto.email ?? null,
-        dto.phone ?? null,
-        dto.currencyCode ?? 'COP',
-        dto.timezone ?? 'America/Bogota',
-      ),
+      CompanyCommandMapper.toUpdate(id, dto),
     );
   }
 
   @Delete(':id')
   @ApiOperation({
     summary: 'Delete company',
+    description: 'Soft deletes a company.',
   })
-  async delete(
-    @Param('id') id: string,
-  ): Promise<DeleteCompanyResult> {
-
-    return this.deleteCompanyUseCase.execute(
-      new DeleteCompanyCommand(id),
-    );
+  @ApiOkResponse({
+    description: 'Company deleted successfully.',
+    type: DeleteCompanyResult,
+  })
+  @ApiNotFoundResponse({
+    description: 'Company not found.',
+  })
+  async delete(@Param('id') id: string): Promise<DeleteCompanyResult> {
+    return this.deleteCompanyUseCase.execute(CompanyQueryMapper.toDelete(id));
   }
 }

@@ -1,4 +1,3 @@
-
 export interface CreateCompanyProps {
   name: string;
 
@@ -8,7 +7,7 @@ export interface CreateCompanyProps {
 
   email: string | null;
 
-  phone: string |null;
+  phone: string | null;
 
   currencyCode?: string;
 

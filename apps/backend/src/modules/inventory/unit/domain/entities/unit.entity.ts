@@ -68,9 +68,7 @@ export class UnitEntity extends BaseEntity {
 
   changeCode(code: string): void {
     if (!code.trim()) {
-      throw new Error(
-        'Unit code cannot be empty.',
-      );
+      throw new Error('Unit code cannot be empty.');
     }
 
     this._code = code.trim().toUpperCase();
@@ -78,9 +76,7 @@ export class UnitEntity extends BaseEntity {
 
   changeName(name: string): void {
     if (!name.trim()) {
-      throw new Error(
-        'Unit name cannot be empty.',
-      );
+      throw new Error('Unit name cannot be empty.');
     }
 
     this._name = name.trim();
@@ -88,19 +84,14 @@ export class UnitEntity extends BaseEntity {
 
   changeSymbol(symbol: string): void {
     if (!symbol.trim()) {
-      throw new Error(
-        'Unit symbol cannot be empty.',
-      );
+      throw new Error('Unit symbol cannot be empty.');
     }
 
     this._symbol = symbol.trim();
   }
 
-  changeDescription(
-    description: string | null,
-  ): void {
-    this._description =
-      description?.trim() || null;
+  changeDescription(description: string | null): void {
+    this._description = description?.trim() || null;
   }
 
   update(props: {
@@ -119,27 +110,19 @@ export class UnitEntity extends BaseEntity {
 
   private validate(): void {
     if (!this._companyId.trim()) {
-      throw new Error(
-        'Company ID is required.',
-      );
+      throw new Error('Company ID is required.');
     }
 
     if (!this._code.trim()) {
-      throw new Error(
-        'Unit code is required.',
-      );
+      throw new Error('Unit code is required.');
     }
 
     if (!this._name.trim()) {
-      throw new Error(
-        'Unit name is required.',
-      );
+      throw new Error('Unit name is required.');
     }
 
     if (!this._symbol.trim()) {
-      throw new Error(
-        'Unit symbol is required.',
-      );
+      throw new Error('Unit symbol is required.');
     }
   }
 }

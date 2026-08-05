@@ -11,9 +11,7 @@ export class UnitMapper {
   /**
    * Prisma -> Domain
    */
-  static toDomain(
-    prismaUnit: PrismaUnit,
-  ): UnitEntity {
+  static toDomain(prismaUnit: PrismaUnit): UnitEntity {
     return new UnitEntity({
       id: prismaUnit.id,
       companyId: prismaUnit.companyId,
@@ -31,9 +29,7 @@ export class UnitMapper {
   /**
    * Domain -> Prisma Create
    */
-  static toCreate(
-    unit: UnitEntity,
-  ): Prisma.UnitCreateInput {
+  static toCreate(unit: UnitEntity): Prisma.UnitCreateInput {
     return {
       company: {
         connect: {
@@ -51,9 +47,7 @@ export class UnitMapper {
   /**
    * Domain -> Prisma Update
    */
-  static toUpdate(
-    unit: UnitEntity,
-  ): Prisma.UnitUpdateInput {
+  static toUpdate(unit: UnitEntity): Prisma.UnitUpdateInput {
     return {
       code: unit.code,
       name: unit.name,
@@ -66,9 +60,7 @@ export class UnitMapper {
   /**
    * Enum Prisma -> Domain
    */
-  private static toDomainStatus(
-    status: PrismaUnitStatus,
-  ): UnitStatus {
+  private static toDomainStatus(status: PrismaUnitStatus): UnitStatus {
     switch (status) {
       case PrismaUnitStatus.ACTIVE:
         return UnitStatus.ACTIVE;
@@ -77,18 +69,14 @@ export class UnitMapper {
         return UnitStatus.INACTIVE;
 
       default:
-        throw new Error(
-          `Unknown unit status: ${status}`,
-        );
+        throw new Error(`Unknown unit status: ${status}`);
     }
   }
 
   /**
    * Enum Domain -> Prisma
    */
-  private static toPrismaStatus(
-    status: UnitStatus,
-  ): PrismaUnitStatus {
+  private static toPrismaStatus(status: UnitStatus): PrismaUnitStatus {
     switch (status) {
       case UnitStatus.ACTIVE:
         return PrismaUnitStatus.ACTIVE;
@@ -97,9 +85,7 @@ export class UnitMapper {
         return PrismaUnitStatus.INACTIVE;
 
       default:
-        throw new Error(
-          `Unknown unit status: ${status}`,
-        );
+        throw new Error(`Unknown unit status: ${status}`);
     }
   }
 }

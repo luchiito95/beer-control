@@ -1,5 +1,3 @@
 export class DeleteCategoryResult {
-  constructor(
-    public readonly message: string,
-  ) {}
+  constructor(public readonly message: string) {}
 }

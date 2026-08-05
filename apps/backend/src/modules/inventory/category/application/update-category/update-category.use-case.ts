@@ -11,21 +11,13 @@ import { UpdateCategoryResult } from './update-category.result';
 
 @Injectable()
 export class UpdateCategoryUseCase {
-  constructor(
-    private readonly categoryRepository: CategoryRepository,
-  ) {}
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  async execute(
-    command: UpdateCategoryCommand,
-  ): Promise<UpdateCategoryResult> {
-
-    const category =
-      await this.categoryRepository.findById(command.id);
+  async execute(command: UpdateCategoryCommand): Promise<UpdateCategoryResult> {
+    const category = await this.categoryRepository.findById(command.id);
 
     if (!category) {
-      throw new NotFoundException(
-        `Category '${command.id}' not found.`,
-      );
+      throw new NotFoundException(`Category '${command.id}' not found.`);
     }
 
     if (category.code !== command.code) {
@@ -35,10 +27,7 @@ export class UpdateCategoryUseCase {
           command.code,
         );
 
-      if (
-        existingCategory &&
-        existingCategory.id !== category.id
-      ) {
+      if (existingCategory && existingCategory.id !== category.id) {
         throw new ConflictException(
           `Category with code '${command.code}' already exists for this company.`,
         );
@@ -51,8 +40,7 @@ export class UpdateCategoryUseCase {
       description: command.description,
     });
 
-    const updated =
-      await this.categoryRepository.update(category);
+    const updated = await this.categoryRepository.update(category);
 
     return new UpdateCategoryResult(
       updated.id,

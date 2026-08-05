@@ -1,0 +1,1 @@
+export * from './prisma-inventory-movement.repository';

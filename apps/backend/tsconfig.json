@@ -3,9 +3,10 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
-
-    "types": ["node", "jest"],
-
+    "types": [
+      "node",
+      "jest"
+    ],
     "esModuleInterop": true,
     "isolatedModules": true,
     "declaration": true,
@@ -17,6 +18,41 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@core/*": [
+        "src/core/*"
+      ],
+      "@database/*": [
+        "src/database/*"
+      ],
+      "@modules/*": [
+        "src/modules/*"
+      ],
+      "@shared/*": [
+        "src/modules/shared/*"
+      ],
+      "@organization/*": [
+        "src/modules/organization/*"
+      ],
+      "@inventory/*": [
+        "src/modules/inventory/*"
+      ],
+      "@catalog/*": [
+        "src/modules/catalog/*"
+      ],
+      "@identity/*": [
+        "src/modules/identity/*"
+      ],
+      "@sales/*": [
+        "src/modules/sales/*"
+      ],
+      "@purchasing/*": [
+        "src/modules/purchasing/*"
+      ],
+      "@services/*": [
+        "src/modules/services/*"
+      ]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

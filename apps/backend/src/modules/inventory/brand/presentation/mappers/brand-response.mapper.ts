@@ -1,51 +1,54 @@
-import { PageResult } from '../../../../../core/application/pagination/page-result';
+import { SearchPage } from '../../../../../core/application/search/search-page';
 
 import { BrandEntity } from '../../domain/entities/brand.entity';
 
 import { GetBrandResult } from '../../application/queries/get-brand/get-brand.result';
-import { BrandSummaryResult } from '../../application/queries/list-brands/brand-summary.result';
+import { BrandSummaryResult } from '../../application/queries/search-brands/brand-summary.result';
 
 export class BrandResponseMapper {
-  static toGetResult(
-    brand: BrandEntity,
-  ): GetBrandResult {
-
+  static toGetResult(brand: BrandEntity): GetBrandResult {
     return new GetBrandResult(
       brand.id,
+
       brand.companyId,
+
       brand.code,
+
       brand.name,
+
       brand.description,
+
       brand.status,
+
       brand.createdAt,
+
       brand.updatedAt,
     );
   }
 
-  static toSummary(
-    brand: BrandEntity,
-  ): BrandSummaryResult {
-
+  static toSummary(brand: BrandEntity): BrandSummaryResult {
     return new BrandSummaryResult(
       brand.id,
+
       brand.companyId,
+
       brand.code,
+
       brand.name,
+
       brand.status,
     );
   }
 
-  static toSummaryPage(
-    page: PageResult<BrandEntity>,
-  ): PageResult<BrandSummaryResult> {
+  static toSummarySearch(
+    page: SearchPage<BrandEntity>,
+  ): SearchPage<BrandSummaryResult> {
+    return new SearchPage({
+      items: page.items.map((brand) => BrandResponseMapper.toSummary(brand)),
 
-    return new PageResult(
-      page.items.map(brand =>
-        BrandResponseMapper.toSummary(brand),
-      ),
-      page.page,
-      page.pageSize,
-      page.totalItems,
-    );
+      criteria: page.criteria,
+
+      totalItems: page.totalItems,
+    });
   }
 }

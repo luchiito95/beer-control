@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { BranchRepository } from '../../../domain/repositories/branch.repository';
 
@@ -10,20 +7,13 @@ import { GetBranchResult } from './get-branch.result';
 
 @Injectable()
 export class GetBranchUseCase {
-  constructor(
-    private readonly repository: BranchRepository,
-  ) {}
+  constructor(private readonly repository: BranchRepository) {}
 
-  async execute(
-    query: GetBranchQuery,
-  ): Promise<GetBranchResult> {
-
+  async execute(query: GetBranchQuery): Promise<GetBranchResult> {
     const branch = await this.repository.findById(query.id);
 
     if (!branch) {
-      throw new NotFoundException(
-        `Branch '${query.id}' not found.`,
-      );
+      throw new NotFoundException(`Branch '${query.id}' not found.`);
     }
 
     return new GetBranchResult(

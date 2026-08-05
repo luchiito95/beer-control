@@ -13,7 +13,7 @@ import { UpdateCompanyUseCase } from './application/update-company/update-compan
 import { DeleteCompanyUseCase } from './application/delete-company/delete-company.use-case';
 
 import { GetCompanyUseCase } from './application/queries/get-company/get-company.use-case';
-import { ListCompaniesUseCase } from './application/queries/list-companies/list-companies.use-case';
+import { SearchCompaniesUseCase } from './application/queries/search-companies/search-companies.use-case';
 
 const CommandHandlers = [
   CreateCompanyUseCase,
@@ -21,19 +21,12 @@ const CommandHandlers = [
   DeleteCompanyUseCase,
 ];
 
-const QueryHandlers = [
-  GetCompanyUseCase,
-  ListCompaniesUseCase,
-];
+const QueryHandlers = [GetCompanyUseCase, SearchCompaniesUseCase];
 
 @Module({
-  imports: [
-    DatabaseModule,
-  ],
+  imports: [DatabaseModule],
 
-  controllers: [
-    CompanyController,
-  ],
+  controllers: [CompanyController],
 
   providers: [
     ...CommandHandlers,
@@ -44,8 +37,6 @@ const QueryHandlers = [
     },
   ],
 
-  exports: [
-    CompanyRepository,
-  ],
+  exports: [CompanyRepository],
 })
-export class CompanyModule  {}
+export class CompanyModule {}

@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { CategoryRepository } from '../../../domain/repositories/category.repository';
 
@@ -10,21 +7,13 @@ import { GetCategoryResult } from './get-category.result';
 
 @Injectable()
 export class GetCategoryUseCase {
-  constructor(
-    private readonly repository: CategoryRepository,
-  ) {}
+  constructor(private readonly repository: CategoryRepository) {}
 
-  async execute(
-    query: GetCategoryQuery,
-  ): Promise<GetCategoryResult> {
-
-    const category =
-      await this.repository.findById(query.id);
+  async execute(query: GetCategoryQuery): Promise<GetCategoryResult> {
+    const category = await this.repository.findById(query.id);
 
     if (!category) {
-      throw new NotFoundException(
-        `Category '${query.id}' not found.`,
-      );
+      throw new NotFoundException(`Category '${query.id}' not found.`);
     }
 
     return new GetCategoryResult(

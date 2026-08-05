@@ -11,34 +11,22 @@ import { UpdateBrandResult } from './update-brand.result';
 
 @Injectable()
 export class UpdateBrandUseCase {
-  constructor(
-    private readonly brandRepository: BrandRepository,
-  ) {}
+  constructor(private readonly brandRepository: BrandRepository) {}
 
-  async execute(
-    command: UpdateBrandCommand,
-  ): Promise<UpdateBrandResult> {
-
-    const brand =
-      await this.brandRepository.findById(command.id);
+  async execute(command: UpdateBrandCommand): Promise<UpdateBrandResult> {
+    const brand = await this.brandRepository.findById(command.id);
 
     if (!brand) {
-      throw new NotFoundException(
-        `Brand '${command.id}' not found.`,
-      );
+      throw new NotFoundException(`Brand '${command.id}' not found.`);
     }
 
     if (brand.code !== command.code) {
-      const existingBrand =
-        await this.brandRepository.findByCompanyAndCode(
-          brand.companyId,
-          command.code,
-        );
+      const existingBrand = await this.brandRepository.findByCompanyAndCode(
+        brand.companyId,
+        command.code,
+      );
 
-      if (
-        existingBrand &&
-        existingBrand.id !== brand.id
-      ) {
+      if (existingBrand && existingBrand.id !== brand.id) {
         throw new ConflictException(
           `Brand with code '${command.code}' already exists for this company.`,
         );
@@ -51,8 +39,7 @@ export class UpdateBrandUseCase {
       description: command.description,
     });
 
-    const updated =
-      await this.brandRepository.update(brand);
+    const updated = await this.brandRepository.update(brand);
 
     return new UpdateBrandResult(
       updated.id,

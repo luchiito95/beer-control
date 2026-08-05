@@ -1,0 +1,23 @@
+export enum InventoryMovementReason {
+
+  PURCHASE = 'PURCHASE',
+
+  SALE = 'SALE',
+
+  TRANSFER = 'TRANSFER',
+
+  RETURN = 'RETURN',
+
+  DAMAGE = 'DAMAGE',
+
+  EXPIRED = 'EXPIRED',
+
+  INVENTORY_COUNT = 'INVENTORY_COUNT',
+
+  MANUAL = 'MANUAL',
+
+  PRODUCTION = 'PRODUCTION',
+
+  CONSUMPTION = 'CONSUMPTION',
+
+}

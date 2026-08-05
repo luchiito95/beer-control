@@ -11,6 +11,7 @@ import { WarehouseModule } from './modules/inventory/warehouse/warehouse.module'
 import { CategoryModule } from './modules/inventory/category/category.module';
 import { BrandModule } from './modules/inventory/brand/brand.module';
 import { UnitModule } from './modules/inventory/unit/unit.module';
+import { ProductModule } from './modules/inventory/product/product.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UnitModule } from './modules/inventory/unit/unit.module';
     CategoryModule,
     BrandModule,
     UnitModule,
+    ProductModule,
   ],
 })
 export class AppModule {}

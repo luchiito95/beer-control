@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { BrandRepository } from '../../domain/repositories/brand.repository';
 
@@ -10,27 +7,17 @@ import { DeleteBrandResult } from './delete-brand.result';
 
 @Injectable()
 export class DeleteBrandUseCase {
-  constructor(
-    private readonly repository: BrandRepository,
-  ) {}
+  constructor(private readonly repository: BrandRepository) {}
 
-  async execute(
-    command: DeleteBrandCommand,
-  ): Promise<DeleteBrandResult> {
-
-    const brand =
-      await this.repository.findById(command.id);
+  async execute(command: DeleteBrandCommand): Promise<DeleteBrandResult> {
+    const brand = await this.repository.findById(command.id);
 
     if (!brand) {
-      throw new NotFoundException(
-        `Brand '${command.id}' not found.`,
-      );
+      throw new NotFoundException(`Brand '${command.id}' not found.`);
     }
 
     await this.repository.softDelete(command.id);
 
-    return new DeleteBrandResult(
-      'Brand deleted successfully.',
-    );
+    return new DeleteBrandResult('Brand deleted successfully.');
   }
 }

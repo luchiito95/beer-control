@@ -23,41 +23,40 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { PageResult } from '../../../../../core/application/pagination/page-result';
-import { PaginationQueryDto } from '../../../../../core/presentation/dto/pagination-query.dto';
+import { SearchPage } from '../../../../../core/application/search/search-page';
 
-import { CreateBranchCommand } from '../../application/create-branch/create-branch.command';
-import { CreateBranchResult } from '../../application/create-branch/create-branch.result';
 import { CreateBranchUseCase } from '../../application/create-branch/create-branch.use-case';
+import { CreateBranchResult } from '../../application/create-branch/create-branch.result';
 
-import { GetBranchQuery } from '../../application/queries/get-branch/get-branch.query';
-import { GetBranchResult } from '../../application/queries/get-branch/get-branch.result';
-import { GetBranchUseCase } from '../../application/queries/get-branch/get-branch.use-case';
-
-import { ListBranchesQuery } from '../../application/queries/list-branches/list-branches.query';
-import { BranchSummaryResult } from '../../application/queries/list-branches/branch-summary.result';
-import { ListBranchesUseCase } from '../../application/queries/list-branches/list-branches.use-case';
-
-import { UpdateBranchCommand } from '../../application/update-branch/update-branch.command';
-import { UpdateBranchResult } from '../../application/update-branch/update-branch.result';
 import { UpdateBranchUseCase } from '../../application/update-branch/update-branch.use-case';
+import { UpdateBranchResult } from '../../application/update-branch/update-branch.result';
 
-import { DeleteBranchCommand } from '../../application/delete-branch/delete-branch.command';
-import { DeleteBranchResult } from '../../application/delete-branch/delete-branch.result';
 import { DeleteBranchUseCase } from '../../application/delete-branch/delete-branch.use-case';
+import { DeleteBranchResult } from '../../application/delete-branch/delete-branch.result';
+
+import { GetBranchUseCase } from '../../application/queries/get-branch/get-branch.use-case';
+import { GetBranchResult } from '../../application/queries/get-branch/get-branch.result';
+
+import { SearchBranchesUseCase } from '../../application/queries/search-branches/search-branches.use-case';
+import { BranchSummaryResult } from '../../application/queries/search-branches/branch-summary.result';
 
 import { CreateBranchDto } from '../dto/create-branch.dto';
 import { UpdateBranchDto } from '../dto/update-branch.dto';
+import { SearchBranchDto } from '../dto/search-branch.dto';
+
+import { BranchCommandMapper } from '../mappers/branch-command.mapper';
+import { BranchQueryMapper } from '../mappers/branch-query.mapper';
+import { BranchSearchMapper } from '../mappers/branch-search.mapper';
 
 @ApiTags('Branches')
 @Controller('branches')
 export class BranchController {
   constructor(
     private readonly createBranchUseCase: CreateBranchUseCase,
-    private readonly getBranchUseCase: GetBranchUseCase,
-    private readonly listBranchesUseCase: ListBranchesUseCase,
     private readonly updateBranchUseCase: UpdateBranchUseCase,
     private readonly deleteBranchUseCase: DeleteBranchUseCase,
+    private readonly getBranchUseCase: GetBranchUseCase,
+    private readonly searchBranchesUseCase: SearchBranchesUseCase,
   ) {}
 
   @Post()
@@ -74,27 +73,10 @@ export class BranchController {
     description: 'Validation error.',
   })
   @ApiConflictResponse({
-    description: 'A branch with the same code already exists.',
+    description: 'Branch code already exists.',
   })
-  async create(
-    @Body() dto: CreateBranchDto,
-  ): Promise<CreateBranchResult> {
-
-    return this.createBranchUseCase.execute(
-      new CreateBranchCommand(
-        dto.companyId,
-        dto.code,
-        dto.name,
-        dto.email ?? null,
-        dto.phone ?? null,
-        dto.address ?? null,
-        dto.city,
-        dto.state ?? null,
-        dto.country,
-        dto.postalCode ?? null,
-        dto.timezone ?? 'America/Bogota',
-      ),
-    );
+  async create(@Body() dto: CreateBranchDto): Promise<CreateBranchResult> {
+    return this.createBranchUseCase.execute(BranchCommandMapper.toCreate(dto));
   }
 
   @Get(':id')
@@ -113,19 +95,14 @@ export class BranchController {
   @ApiNotFoundResponse({
     description: 'Branch not found.',
   })
-  async findById(
-    @Param('id') id: string,
-  ): Promise<GetBranchResult> {
-
-    return this.getBranchUseCase.execute(
-      new GetBranchQuery(id),
-    );
+  async findById(@Param('id') id: string): Promise<GetBranchResult> {
+    return this.getBranchUseCase.execute(BranchQueryMapper.toGet(id));
   }
 
   @Get()
   @ApiOperation({
-    summary: 'List branches',
-    description: 'Returns a paginated list of branches.',
+    summary: 'Search branches',
+    description: 'Returns a paginated list of branches using filters.',
   })
   @ApiQuery({
     name: 'page',
@@ -137,54 +114,51 @@ export class BranchController {
     required: false,
     example: 10,
   })
-  async findAll(
-    @Query() query: PaginationQueryDto,
-  ): Promise<PageResult<BranchSummaryResult>> {
-
-    return this.listBranchesUseCase.execute(
-      new ListBranchesQuery(
-        query.page,
-        query.pageSize,
-      ),
+  async search(
+    @Query() dto: SearchBranchDto,
+  ): Promise<SearchPage<BranchSummaryResult>> {
+    return this.searchBranchesUseCase.execute(
+      BranchQueryMapper.toSearch(BranchSearchMapper.toCriteria(dto)),
     );
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Update branch',
+    description: 'Updates an existing branch.',
+  })
+  @ApiOkResponse({
+    description: 'Branch updated successfully.',
+    type: UpdateBranchResult,
+  })
+  @ApiNotFoundResponse({
+    description: 'Branch not found.',
+  })
+  @ApiConflictResponse({
+    description: 'Branch code already exists.',
   })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateBranchDto,
   ): Promise<UpdateBranchResult> {
-
     return this.updateBranchUseCase.execute(
-      new UpdateBranchCommand(
-        id,
-        dto.code!,
-        dto.name!,
-        dto.email ?? null,
-        dto.phone ?? null,
-        dto.address ?? null,
-        dto.city!,
-        dto.state ?? null,
-        dto.country!,
-        dto.postalCode ?? null,
-        dto.timezone ?? 'America/Bogota',
-      ),
+      BranchCommandMapper.toUpdate(id, dto),
     );
   }
 
   @Delete(':id')
   @ApiOperation({
     summary: 'Delete branch',
+    description: 'Soft deletes a branch.',
   })
-  async delete(
-    @Param('id') id: string,
-  ): Promise<DeleteBranchResult> {
-
-    return this.deleteBranchUseCase.execute(
-      new DeleteBranchCommand(id),
-    );
+  @ApiOkResponse({
+    description: 'Branch deleted successfully.',
+    type: DeleteBranchResult,
+  })
+  @ApiNotFoundResponse({
+    description: 'Branch not found.',
+  })
+  async delete(@Param('id') id: string): Promise<DeleteBranchResult> {
+    return this.deleteBranchUseCase.execute(BranchQueryMapper.toDelete(id));
   }
 }

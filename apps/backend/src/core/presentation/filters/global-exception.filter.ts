@@ -16,10 +16,7 @@ import { ErrorResponse } from '../responses/error-response';
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
-  catch(
-    exception: unknown,
-    host: ArgumentsHost,
-  ): void {
+  catch(exception: unknown, host: ArgumentsHost): void {
     this.logger.error(exception);
 
     const ctx = host.switchToHttp();
@@ -57,15 +54,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    response.status(status).json(
-      new ErrorResponse(
-        false,
-        status,
-        error,
-        message,
-        request.url,
-        new Date().toISOString(),
-      ),
-    );
+    response
+      .status(status)
+      .json(
+        new ErrorResponse(
+          false,
+          status,
+          error,
+          message,
+          request.url,
+          new Date().toISOString(),
+        ),
+      );
   }
 }

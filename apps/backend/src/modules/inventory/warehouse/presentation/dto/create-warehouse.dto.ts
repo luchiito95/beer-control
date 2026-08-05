@@ -1,7 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsNotEmpty,
@@ -12,7 +9,6 @@ import {
 } from 'class-validator';
 
 export class CreateWarehouseDto {
-
   @ApiProperty({
     description: 'Branch identifier.',
     example: 'cmel3n3kb0000abc123xyz',

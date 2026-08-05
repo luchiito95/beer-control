@@ -1,5 +1,3 @@
 export class DeleteUnitResult {
-  constructor(
-    public readonly message: string,
-  ) {}
+  constructor(public readonly message: string) {}
 }

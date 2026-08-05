@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PageRequest } from '../../../../../../core/application/pagination/page-request';
-import { PageResult } from '../../../../../../core/application/pagination/page-result';
+import { SearchCriteria } from '../../../../../../core/application/search/search-criteria';
+import { SearchPage } from '../../../../../../core/application/search/search-page';
+
 
 import { PrismaService } from '../../../../../../database/prisma/prisma.service';
 
@@ -9,126 +10,105 @@ import { UnitEntity } from '../../../domain/entities/unit.entity';
 import { UnitRepository } from '../../../domain/repositories/unit.repository';
 
 import { UnitMapper } from '../mappers/unit.mapper';
+import { PrismaSearchMapper } from '@database/prisma';
 
 @Injectable()
-export class PrismaUnitRepository
-  extends UnitRepository {
-
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {
+export class PrismaUnitRepository extends UnitRepository {
+  constructor(private readonly prisma: PrismaService) {
     super();
   }
 
-  async create(
-    unit: UnitEntity,
-  ): Promise<UnitEntity> {
-
-    const created =
-      await this.prisma.unit.create({
-        data: UnitMapper.toCreate(unit),
-      });
+  async create(unit: UnitEntity): Promise<UnitEntity> {
+    const created = await this.prisma.unit.create({
+      data: UnitMapper.toCreate(unit),
+    });
 
     return UnitMapper.toDomain(created);
   }
 
-  async findById(
-    id: string,
-  ): Promise<UnitEntity | null> {
+  async findById(id: string): Promise<UnitEntity | null> {
+    const unit = await this.prisma.unit.findFirst({
+      where: {
+        id,
 
-    const unit =
-      await this.prisma.unit.findFirst({
-        where: {
-          id,
-          deletedAt: null,
-        },
-      });
+        deletedAt: null,
+      },
+    });
 
-    return unit
-      ? UnitMapper.toDomain(unit)
-      : null;
+    return unit ? UnitMapper.toDomain(unit) : null;
   }
 
-  async findAll(
-    page: number,
-    pageSize: number,
-  ): Promise<PageResult<UnitEntity>> {
+  async search(criteria: SearchCriteria): Promise<SearchPage<UnitEntity>> {
+    const query = PrismaSearchMapper.toQuery(criteria);
 
-    const pagination =
-      new PageRequest(page, pageSize);
+    const [units, totalItems] = await Promise.all([
+      this.prisma.unit.findMany({
+        where: {
+          ...query.where,
 
-    const [units, totalItems] =
-      await this.prisma.$transaction([
-        this.prisma.unit.findMany({
-          where: {
-            deletedAt: null,
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-          skip: pagination.skip,
-          take: pagination.take,
-        }),
+          deletedAt: null,
+        },
 
-        this.prisma.unit.count({
-          where: {
-            deletedAt: null,
-          },
-        }),
-      ]);
+        orderBy: query.orderBy,
 
-    return new PageResult(
-      units.map(unit =>
-        UnitMapper.toDomain(unit),
-      ),
-      page,
-      pageSize,
+        skip: (criteria.page - 1) * criteria.pageSize,
+
+        take: criteria.pageSize,
+      }),
+
+      this.prisma.unit.count({
+        where: {
+          ...query.where,
+
+          deletedAt: null,
+        },
+      }),
+    ]);
+
+    return new SearchPage({
+      items: units.map((unit) => UnitMapper.toDomain(unit)),
+
+      criteria,
+
       totalItems,
-    );
+    });
   }
 
   async findByCompanyAndCode(
     companyId: string,
     code: string,
   ): Promise<UnitEntity | null> {
+    const unit = await this.prisma.unit.findFirst({
+      where: {
+        companyId,
 
-    const unit =
-      await this.prisma.unit.findFirst({
-        where: {
-          companyId,
-          code,
-          deletedAt: null,
-        },
-      });
+        code,
 
-    return unit
-      ? UnitMapper.toDomain(unit)
-      : null;
+        deletedAt: null,
+      },
+    });
+
+    return unit ? UnitMapper.toDomain(unit) : null;
   }
 
-  async update(
-    unit: UnitEntity,
-  ): Promise<UnitEntity> {
+  async update(unit: UnitEntity): Promise<UnitEntity> {
+    const updated = await this.prisma.unit.update({
+      where: {
+        id: unit.id,
+      },
 
-    const updated =
-      await this.prisma.unit.update({
-        where: {
-          id: unit.id,
-        },
-        data: UnitMapper.toUpdate(unit),
-      });
+      data: UnitMapper.toUpdate(unit),
+    });
 
     return UnitMapper.toDomain(updated);
   }
 
-  async softDelete(
-    id: string,
-  ): Promise<void> {
-
+  async softDelete(id: string): Promise<void> {
     await this.prisma.unit.update({
       where: {
         id,
       },
+
       data: {
         deletedAt: new Date(),
       },

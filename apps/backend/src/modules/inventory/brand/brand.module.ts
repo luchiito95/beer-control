@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { DatabaseModule } from '../../../database/database.module';
+import { DatabaseModule } from '../../../database/';
 
 import { CompanyModule } from '../../organization/company/company.module';
 
@@ -15,7 +15,7 @@ import { UpdateBrandUseCase } from './application/update-brand/update-brand.use-
 import { DeleteBrandUseCase } from './application/delete-brand/delete-brand.use-case';
 
 import { GetBrandUseCase } from './application/queries/get-brand/get-brand.use-case';
-import { ListBrandsUseCase } from './application/queries/list-brands/list-brands.use-case';
+import { SearchBrandsUseCase } from './application/queries/search-brands/search-brands.use-case';
 
 const CommandHandlers = [
   CreateBrandUseCase,
@@ -23,20 +23,12 @@ const CommandHandlers = [
   DeleteBrandUseCase,
 ];
 
-const QueryHandlers = [
-  GetBrandUseCase,
-  ListBrandsUseCase,
-];
+const QueryHandlers = [GetBrandUseCase, SearchBrandsUseCase];
 
 @Module({
-  imports: [
-    DatabaseModule,
-    CompanyModule,
-  ],
+  imports: [DatabaseModule, CompanyModule],
 
-  controllers: [
-    BrandController,
-  ],
+  controllers: [BrandController],
 
   providers: [
     ...CommandHandlers,
@@ -47,8 +39,6 @@ const QueryHandlers = [
     },
   ],
 
-  exports: [
-    BrandRepository,
-  ],
+  exports: [BrandRepository],
 })
 export class BrandModule {}
